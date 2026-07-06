@@ -4,6 +4,15 @@ Todas las novedades, cambios y correcciones del proyecto Administrador ISP será
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/), y este proyecto se adhiere a [Versionamiento Semántico (SemVer)](https://semver.org/lang/es/).
 
+## [2.3.4] - 2026-07-06
+
+### Arreglado
+- **Multitenencia:** Se eliminó el dominio base estático (`localhost`) al crear nuevas empresas (inquilinos). Ahora el dominio se hereda dinámicamente consultando el dominio primario del esquema público, garantizando el funcionamiento transparente en entornos de producción y desarrollo.
+- **Documentación:** Se corrigió el dominio público de desarrollo en el `README.md` (`nucleoisp.localhost` -> `localhost`) siguiendo las convenciones estándar.
+
+### Cambiado
+- **Refactorización:** Se reorganizaron las importaciones de dependencias en `nucleo_admin/admin.py` adoptando el estilo visual de "pirámide invertida" (orden descendente por longitud) y se eliminaron las importaciones en línea (`inline imports`) para mejorar la legibilidad y las buenas prácticas.
+
 ## [2.3.3] - 2026-07-01
 
 ### Arreglado

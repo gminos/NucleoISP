@@ -80,7 +80,7 @@ El entorno inicializa la base de datos, el servidor web, trabajadores de Celery 
 
 2. Crea el inquilino principal (Public Tenant) para la administración central:
    ```bash
-   docker compose exec web uv run python manage.py create_tenant --schema_name=public --domain_url=nucleoisp.localhost --name="NucleoISP Central"
+   docker compose exec web uv run python manage.py create_tenant --schema_name=public --domain-domain=localhost --domain-is_primary=True --name="NucleoISP Central"
    ```
 
 3. Crea el usuario administrador maestro (Superuser):

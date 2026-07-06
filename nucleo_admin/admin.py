@@ -1,6 +1,9 @@
+from nucleo_admin.tasks import enviar_correo_bienvenida_isp
 from django_tenants.admin import TenantAdminMixin
+from .models import Dominio, EmpresaISP, Paquete
 from django_tenants.utils import schema_context
-from .models import EmpresaISP, Dominio, Paquete
+from django.contrib.auth import get_user_model
+from django.contrib import messages
 from unfold.admin import ModelAdmin
 from django.contrib import admin
 import string
@@ -26,7 +29,12 @@ class EmpresaISPAdmin(TenantAdminMixin, ModelAdmin):
         super().save_model(request, obj, form, change)
 
         if is_new:
-            base_domain = 'localhost'
+            try:
+                public_tenant = EmpresaISP.objects.get(schema_name='public')
+                base_domain = Dominio.objects.get(tenant=public_tenant, is_primary=True).domain
+            except (EmpresaISP.DoesNotExist, Dominio.DoesNotExist):
+                base_domain = 'localhost'
+
             if not obj.slug:
                 obj.slug = f"isp_{uuid.uuid4().hex[:6]}"
                 obj.save(update_fields=['slug'])
@@ -42,7 +50,6 @@ class EmpresaISPAdmin(TenantAdminMixin, ModelAdmin):
                 password = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
 
                 with schema_context(obj.schema_name):
-                    from django.contrib.auth import get_user_model
                     User = get_user_model()
                     if not User.objects.filter(email=obj.admin_email).exists():
                         User.objects.create_superuser(
@@ -50,19 +57,17 @@ class EmpresaISPAdmin(TenantAdminMixin, ModelAdmin):
                             email=obj.admin_email,
                             password=password
                         )
-                        
-                        from nucleo_admin.tasks import enviar_correo_bienvenida_isp
+
                         protocol = request.scheme if request else 'http'
                         url_panel = f"{protocol}://{domain_str}"
-                        
+
                         enviar_correo_bienvenida_isp.delay(
                             email_destino=obj.admin_email,
                             nombre_empresa=obj.name,
                             url_panel=url_panel,
                             password_temporal=password
                         )
-                        
-                        from django.contrib import messages
+
                         messages.success(request, f"Empresa creada exitosamente. Las credenciales de acceso han sido enviadas al correo: {obj.admin_email}")
 
 @admin.register(Dominio)
