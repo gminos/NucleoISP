@@ -4,6 +4,16 @@ Todas las novedades, cambios y correcciones del proyecto Administrador ISP será
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/), y este proyecto se adhiere a [Versionamiento Semántico (SemVer)](https://semver.org/lang/es/).
 
+## [2.3.5] - 2026-07-08
+
+### Arreglado
+- **Redes (VPN):** Se reemplazó el uso de `print()` por el módulo estándar de `logging` en `redes/admin.py` para evitar fugas de información técnica (Tracebacks) hacia el cliente final cuando falla la conexión con el contenedor `wg-easy`.
+- **Experiencia de Usuario:** Se mejoraron los mensajes de alerta de fallo de VPN para que sean limpios, profesionales e incluyan códigos de error de soporte (`ERR-VPN-01`, `ERR-VPN-02`).
+
+### Cambiado
+- **Refactorización:** Se eliminó la validación condicional de desarrollo que inyectaba el texto "TU_IP_PUBLICA_O_DDNS" en los scripts de WireGuard. Ahora el generador confía exclusivamente en el dominio dinámico del `Host` HTTP (`request.get_host()`), lo que mejora la limpieza del código y soporta nativamente túneles como Ngrok sin necesidad de variables de entorno.
+- **Refactorización:** Se reorganizaron las importaciones de dependencias en `redes/admin.py` adoptando el estilo visual de "pirámide invertida" (orden descendente por longitud) y se eliminaron las importaciones en línea (`inline imports`).
+
 ## [2.3.4] - 2026-07-06
 
 ### Arreglado

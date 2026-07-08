@@ -1,6 +1,6 @@
 [project]
 name = "conexiones"
-version = "2.3.4"
+version = "2.3.5"
 description = "Sistema integral para la gestión y administración de proveedores de servicios de internet (ISP)."
 readme = "README.md"
 requires-python = ">=3.13"
