@@ -4,13 +4,13 @@
     <p><strong>Plataforma para la gestión de proveedores de servicio de internet</strong></p>
 </div>
 
-## Descripción General
+## Descripción general
 
 NucleoISP es una plataforma diseñada con arquitectura multi-tenant, aislando completamente los datos de cada proveedor de internet a nivel de esquema en PostgreSQL. Desarrollada sobre el ecosistema de Python y Django, la plataforma permite a empresas proveedoras de internet administrar toda su lógica de negocios, facturación, automatización y control de infraestructura de red de manera centralizada.
 
 El sistema funciona mediante un esquema público que orquesta la creación y administración de los proveedores de internet, asignando a cada uno un subdominio dedicado para acceder a su panel de control independiente de marca blanca.
 
-## Capacidades Arquitectónicas
+## Capacidades arquitectónicas
 
 * **Arquitectura multi-tenant aislada:** Uso de esquemas de bases de datos independientes para asegurar privacidad absoluta de los datos y escalabilidad de alto rendimiento.
 * **Integración directa con infraestructura:** Comunicación bidireccional mediante la API de RouterOS con equipos Mikrotik.
@@ -23,7 +23,7 @@ El sistema funciona mediante un esquema público que orquesta la creación y adm
 * **Túneles seguros incorporados:** Despliegue empaquetado con WireGuard para garantizar accesos seguros a la red de gestión y monitoreo.
 * **Notificaciones automatizadas por WhatsApp:** Integración para el envío automático de comprobantes de pago y alertas de cobro directamente a los clientes de cada ISP.
 
-## Stack Tecnológico
+## Stack tecnológico
 
 * **Backend:** Python 3.13, Django 5.x, Django Tenants, Celery
 * **Base de Datos:** PostgreSQL 17
@@ -32,7 +32,7 @@ El sistema funciona mediante un esquema público que orquesta la creación y adm
 * **Gestor de Paquetes:** UV
 * **Interfaz de Administración:** Django Unfold
 
-## Proceso de Despliegue Local
+## Proceso de despliegue local
 
 1. **Clonar el repositorio:**
 
@@ -41,12 +41,12 @@ git clone https://github.com/gminos/NucleoISP.git
 cd NucleoISP
 ```
 
-2. **Configuración de Entorno:**
+2. **Configuración de entorno:**
 
 Crear un archivo `.env.dev` en el directorio raíz basado en los requerimientos de la plataforma:
 
 ```env
-# Configuracion Base de Datos
+# Configuracion base de datos
 POSTGRES_DB=postgres
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=contrasena_segura
@@ -56,40 +56,39 @@ DJANGO_SECRET_KEY=clave_ultra_secreta_aqui
 DJANGO_ALLOWED_HOSTS=.nucleoisp.localhost,127.0.0.1
 DEBUG=True
 
-# Configuracion Correo Electronico
+# Configuracion correo electronico
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USE_TLS=true
 EMAIL_HOST_USER=tu_correo@gmail.com
 EMAIL_HOST_PASSWORD=tu_contrasena_de_aplicacion
 
-# Configuracion WireGuard
+# Configuracion wireguard
+WG_HOST=127.0.0.1
 WG_PASSWORD=contrasena_admin_vpn
 ```
 
-3. **Construcción y Arranque de Contenedores:**
+3. **Construcción y arranque de contenedores:**
 
-El entorno inicializa la base de datos, el servidor web, trabajadores de Celery y el balanceador proxy inverso local.
+Levantar los contenedores:
+```bash
+docker compose -f docker-compose.dev.yml up -d --build
+```
 
-3. **Inicialización de la Arquitectura Multi-Tenant:**
+4. **Inicialización de la arquitectura multi-tenant:**
 
-1. Construye y levanta los contenedores:
+1. Crea el inquilino principal para la administración central:
    ```bash
-   docker compose up -d --build
+   docker compose -f docker-compose.dev.yml exec web uv run python manage.py create_tenant --schema_name=public --domain-domain=localhost --domain-is_primary=True --name="NucleoISP Central"
    ```
 
-2. Crea el inquilino principal (Public Tenant) para la administración central:
+2. Crea el usuario administrador maestro:
    ```bash
-   docker compose exec web uv run python manage.py create_tenant --schema_name=public --domain-domain=localhost --domain-is_primary=True --name="NucleoISP Central"
+   docker compose -f docker-compose.dev.yml exec web uv run python manage.py create_tenant_superuser --schema_name=public
    ```
 
-3. Crea el usuario administrador maestro (Superuser):
-   ```bash
-   docker compose exec web uv run python manage.py create_tenant_superuser --schema_name=public
-   ```
+5. **Acceso al panel central:**
 
-4. **Acceso al Panel Central:**
-
-Ingresar mediante el dominio principal configurado (ej. `http://nucleoisp.localhost:8000`) utilizando las credenciales maestras generadas. Desde este panel público se podrán aprovisionar las nuevas empresas, las cuales recibirán inmediatamente su propia base de datos y su propio subdominio.
+Ingresar mediante el dominio principal configurado (ej. `http://localhost:8000`) utilizando las credenciales maestras generadas. Desde este panel público se podrán aprovisionar las nuevas empresas, las cuales recibirán inmediatamente su propia base de datos y su propio subdominio.
 
 ---

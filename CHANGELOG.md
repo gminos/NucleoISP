@@ -4,6 +4,11 @@ Todas las novedades, cambios y correcciones del proyecto Administrador ISP será
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/), y este proyecto se adhiere a [Versionamiento Semántico (SemVer)](https://semver.org/lang/es/).
 
+## [2.3.6] - 2026-07-24
+
+### Arreglado
+- **Documentación:** Se actualizaron las instrucciones de inicio y despliegue local en el `README.md` para utilizar explícitamente el archivo `docker-compose.dev.yml` en modo desarrollo y corregir la secuencia numerada de pasos.
+
 ## [2.3.5] - 2026-07-08
 
 ### Arreglado
