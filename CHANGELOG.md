@@ -4,6 +4,11 @@ Todas las novedades, cambios y correcciones del proyecto Administrador ISP será
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/), y este proyecto se adhiere a [Versionamiento Semántico (SemVer)](https://semver.org/lang/es/).
 
+## [2.3.7] - 2026-08-20
+
+### Arreglado
+- **Documentación:** Se corrigieron las variables de entorno en la plantilla de ejemplo `.env.dev` del `README.md` (`DJANGO_DEBUG=true` en lugar de `DEBUG=True`, y `DJANGO_ALLOWED_HOSTS=.localhost,127.0.0.1` en lugar de `.nucleoisp.localhost`) para evitar errores de conexión HTTP 400 (`DisallowedHost`) y asegurar que Django inicie con la depuración activa en desarrollo. Se añadió también `POSTGRES_PORT=5432`.
+
 ## [2.3.6] - 2026-07-24
 
 ### Arreglado

@@ -50,11 +50,12 @@ Crear un archivo `.env.dev` en el directorio raíz basado en los requerimientos 
 POSTGRES_DB=postgres
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=contrasena_segura
+POSTGRES_PORT=5432
 
 # Configuracion Django
 DJANGO_SECRET_KEY=clave_ultra_secreta_aqui
-DJANGO_ALLOWED_HOSTS=.nucleoisp.localhost,127.0.0.1
-DEBUG=True
+DJANGO_ALLOWED_HOSTS=.localhost,127.0.0.1
+DJANGO_DEBUG=true
 
 # Configuracion correo electronico
 EMAIL_HOST=smtp.gmail.com
