@@ -66,7 +66,8 @@ EMAIL_HOST_PASSWORD=tu_contrasena_de_aplicacion
 
 # Configuracion wireguard
 WG_HOST=127.0.0.1
-WG_PASSWORD=contrasena_admin_vpn
+WG_EASY_API_PASSWORD=secret_dev_password
+PASSWORD_HASH=$$2a$$12$$F9Uc/Tf81FZNpKT6gYzLFORiqrvLHlo1xmxGa0XbJIWgfopdSQv9O
 ```
 
 3. **Construcción y arranque de contenedores:**

@@ -4,6 +4,11 @@ Todas las novedades, cambios y correcciones del proyecto Administrador ISP será
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/), y este proyecto se adhiere a [Versionamiento Semántico (SemVer)](https://semver.org/lang/es/).
 
+## [2.3.8] - 2026-09-02
+
+### Arreglado
+- **Documentación y Seguridad:** Se actualizó el bloque de WireGuard en el `README.md` reemplazando la variable obsoleta `WG_PASSWORD` por las variables `WG_EASY_API_PASSWORD` (en texto plano para Django) y `PASSWORD_HASH` (hash bcrypt para `wg-easy`), garantizando que la autenticación de la API de VPN funcione de extremo a extremo sin errores de autorización. Se sincronizó también el archivo `.env.dev`.
+
 ## [2.3.7] - 2026-08-20
 
 ### Arreglado
