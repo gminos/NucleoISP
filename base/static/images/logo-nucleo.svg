@@ -1,19 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
-    <defs>
-        <linearGradient id="nucleoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#3b82f6" /> <!-- Azul Tech -->
-            <stop offset="100%" stop-color="#8b5cf6" /> <!-- Violeta Moderno -->
-        </linearGradient>
-    </defs>
-    
-    <!-- Centro (Núcleo) -->
-    <circle cx="128" cy="128" r="44" fill="url(#nucleoGrad)" />
-    
-    <!-- Anillos de Red / ISP -->
-    <circle cx="128" cy="128" r="80" stroke="url(#nucleoGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="70 40 110 30" opacity="0.8"/>
-    
-    <!-- Nodos Periféricos (Conexiones) -->
-    <circle cx="128" cy="48" r="16" fill="#3b82f6" />
-    <circle cx="208" cy="128" r="16" fill="#8b5cf6" />
-    <circle cx="71" cy="184" r="14" fill="#6366f1" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- NucleoISP: N de red. Trazo unico entre dos nodos, cuadricula de 48 -->
+  <path d="M13 35V13L35 35V13" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="13" cy="35" r="5.5" fill="#059669"/>
+  <circle cx="35" cy="13" r="5.5" fill="#059669"/>
 </svg>

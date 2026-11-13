@@ -6,6 +6,10 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ## [Unreleased]
 
+### Cambiado
+- **Identidad visual:** Se rediseno el logotipo de NucleoISP (una "N" de red entre dos nodos, en la paleta verde del panel) y se agrego una variante para fondo oscuro (`logo-dark.svg`). El panel de administracion muestra la variante oscura en modo oscuro y el `README.md` elige el logotipo segun el tema claro u oscuro.
+- **Refactorizacion:** Se extrajo la funcion auxiliar `_resolver_logo` en `conexiones/settings.py` para no duplicar la logica que decide entre el logo del inquilino y el logo por defecto.
+
 ## [2.4.0] - 2026-11-13
 
 ### Añadido

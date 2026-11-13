@@ -205,10 +205,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-def obtener_logo_inquilino(request):
+def _resolver_logo(request, logo_por_defecto):
     if hasattr(request, 'tenant') and request.tenant.schema_name != 'public' and request.tenant.logo:
         return request.tenant.logo.url
-    return static("images/logo-nucleo.svg")
+    return static(logo_por_defecto)
+
+def obtener_logo_inquilino(request):
+    return _resolver_logo(request, "images/logo-nucleo.svg")
+
+def obtener_logo_inquilino_oscuro(request):
+    return _resolver_logo(request, "images/logo-dark.svg")
 
 def obtener_nombre_inquilino(request):
     if hasattr(request, 'tenant') and request.tenant.schema_name != 'public':
@@ -221,7 +227,7 @@ UNFOLD = {
     "SITE_URL": "/",
     "SITE_ICON": {
         "light": obtener_logo_inquilino,
-        "dark": obtener_logo_inquilino,
+        "dark": obtener_logo_inquilino_oscuro,
     },
     "SITE_FAVICONS": [
         {
