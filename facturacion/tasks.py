@@ -5,12 +5,20 @@ from django_tenants.utils import tenant_context
 from nucleo_admin.models import EmpresaISP
 from celery import shared_task, Task
 from django.utils import timezone
+from django.conf import settings
 
 @shared_task(bind=True)
-def procesar_envio_facturas(self: Task) -> str:
+def procesar_envio_facturas(self: Task, schema_name: str | None = None) -> str:
+    if settings.WHATSAPP_SIMULATION_MODE and not schema_name:
+        raise ValueError("En modo simulacion se debe indicar schema_name para no procesar todos los inquilinos.")
+
     hoy = timezone.now().date()
 
     inquilinos = EmpresaISP.objects.exclude(schema_name='public')
+
+    if schema_name:
+        inquilinos = inquilinos.filter(schema_name=schema_name)
+
     resultado_total = []
 
     for inquilino in inquilinos:

@@ -4,6 +4,22 @@ Todas las novedades, cambios y correcciones del proyecto Administrador ISP será
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/), y este proyecto se adhiere a [Versionamiento Semántico (SemVer)](https://semver.org/lang/es/).
 
+## [Unreleased]
+
+## [2.4.0] - 2026-11-13
+
+### Añadido
+- **Facturacion (modo simulacion):** Nueva variable `WHATSAPP_SIMULATION_MODE` que, con `DJANGO_DEBUG=true`, desvia el envio de facturas por WhatsApp hacia el disco local (`media/simulaciones_facturas/`). Se ejecuta el flujo grafico completo (plantilla, PDF y conversion a imagen) y solo se omite la llamada a la API de Meta, lo que permite inspeccionar las imagenes y medir el consumo de recursos sin credenciales ni costos. Con la depuracion desactivada la simulacion no puede activarse.
+- **Comando `crear_datos_simulacion`:** Genera en lote clientes, instalaciones y facturas pendientes de prueba en un esquema (`--schema` obligatorio, `--cantidad` opcional). Reemplaza los datos de simulacion previos dentro de una unica transaccion y solo puede ejecutarse con `DJANGO_DEBUG=true`.
+- **Comando `purgar_facturas_simuladas`:** Elimina las imagenes generadas en modo simulacion. Solo puede ejecutarse con `DJANGO_DEBUG=true`.
+- **Tarea `procesar_envio_facturas`:** Nuevo parametro opcional `schema_name` para procesar un unico inquilino. En modo simulacion es obligatorio, evitando simular sin querer los envios de todos los inquilinos.
+- **Documentacion:** Se agrego `WHATSAPP_SIMULATION_MODE` a la plantilla `.env.dev` del `README.md`.
+
+### Cambiado
+- **Facturacion:** La validacion de credenciales de WhatsApp del inquilino se ejecuta antes de generar el PDF, evitando renderizar facturas que no se podran enviar.
+- **Refactorizacion:** Se reemplazo `print()` por un logger de modulo en `facturacion/services/whatsapp.py`, con niveles segun gravedad e identificador de factura en los mensajes. Se extrajeron las funciones auxiliares `_formatear_telefono` y `_pdf_a_jpeg_bytes`, compartidas por el envio de facturas y de comprobantes.
+- **Refactorizacion:** Se reorganizaron las importaciones de `crear_datos_simulacion.py` adoptando el estilo de "piramide invertida" (orden descendente por longitud).
+
 ## [2.3.8] - 2026-09-02
 
 ### Arreglado
