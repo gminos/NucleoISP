@@ -1,5 +1,8 @@
 <div align="center">
-    <img src="base/static/images/logo-nucleo.svg" alt="NucleoISP Logo" width="200"/>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="base/static/images/logo-dark.svg"/>
+        <img src="base/static/images/logo-nucleo.svg" alt="NucleoISP Logo" width="140"/>
+    </picture>
     <h1>NucleoISP</h1>
     <p><strong>Plataforma para la gestión de proveedores de servicio de internet</strong></p>
 </div>
