@@ -35,6 +35,9 @@ ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 INTERNAL_IPS = ["127.0.0.1"]
 
+WHATSAPP_SIMULATION_MODE = os.getenv("WHATSAPP_SIMULATION_MODE", "false").lower() == "true" and DEBUG
+WHATSAPP_SIMULATION_DIR = "simulaciones_facturas"
+
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
 }
