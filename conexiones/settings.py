@@ -399,6 +399,7 @@ UNFOLD = {
 
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://redis:6379/0")
+CELERY_WORKER_CONCURRENCY = int(os.getenv("CELERY_WORKER_CONCURRENCY", "2"))
 CELERY_TIMEZONE = TIME_ZONE
 
 # Default configuration (from env or defaults)

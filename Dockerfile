@@ -7,5 +7,6 @@ ARG UV_NO_DEV=1
 RUN uv sync --locked
 COPY . .
 ENV PATH="/app/.venv/bin:$PATH"
+ENV WEB_CONCURRENCY=3
 EXPOSE 8000
-CMD gunicorn --workers $((2 * $(nproc) + 1)) --bind 0.0.0.0:8000 conexiones.wsgi:application
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "conexiones.wsgi:application"]
