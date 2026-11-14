@@ -74,6 +74,9 @@ PASSWORD_HASH=$$2a$$12$$F9Uc/Tf81FZNpKT6gYzLFORiqrvLHlo1xmxGa0XbJIWgfopdSQv9O
 
 # Configuracion whatsapp (solo funciona con DJANGO_DEBUG=true)
 WHATSAPP_SIMULATION_MODE=true
+
+# Configuracion celery (procesos del worker, por defecto 2)
+CELERY_WORKER_CONCURRENCY=2
 ```
 
 3. **Construcción y arranque de contenedores:**
@@ -83,16 +86,21 @@ Levantar los contenedores:
 docker compose -f docker-compose.dev.yml up -d --build
 ```
 
+Si cambian las dependencias (`uv.lock`), agregar `-V` para recrear el volumen anonimo de `.venv`; sin el, los contenedores conservan el entorno anterior:
+```bash
+docker compose -f docker-compose.dev.yml up -d --build -V
+```
+
 4. **Inicialización de la arquitectura multi-tenant:**
 
 1. Crea el inquilino principal para la administración central:
    ```bash
-   docker compose -f docker-compose.dev.yml exec web uv run python manage.py create_tenant --schema_name=public --domain-domain=localhost --domain-is_primary=True --name="NucleoISP Central"
+   docker compose -f docker-compose.dev.yml exec web python manage.py create_tenant --schema_name=public --domain-domain=localhost --domain-is_primary=True --name="NucleoISP Central"
    ```
 
 2. Crea el usuario administrador maestro:
    ```bash
-   docker compose -f docker-compose.dev.yml exec web uv run python manage.py create_tenant_superuser --schema_name=public
+   docker compose -f docker-compose.dev.yml exec web python manage.py create_tenant_superuser --schema_name=public
    ```
 
 5. **Acceso al panel central:**

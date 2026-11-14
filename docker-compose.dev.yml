@@ -1,76 +1,130 @@
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
+  migrate:
+    image: nucleoisp:dev
+    pull_policy: never
+    container_name: nucleoisp_dev_migrate
+    command: >
+      sh -c "python manage.py migrate_schemas --shared &&
+      python manage.py migrate_schemas --tenant"
+    volumes:
+      - ./:/app
+      - /app/.venv
+    env_file:
+      - .env.dev
+    environment:
+      POSTGRES_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    logging: *logging
+
   web:
-    build: .
-    container_name: conexiones_dev_web
-    command: uv run python manage.py runserver 0.0.0.0:8000
+    build:
+      context: .
+      args:
+        UV_NO_DEV: "0"
+    image: nucleoisp:dev
+    container_name: nucleoisp_dev_web
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./:/app
       - /app/.venv
     env_file:
       - .env.dev
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       POSTGRES_HOST: db
-      RUN_MIGRATIONS: "true"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    logging: *logging
 
   redis:
     image: redis:7-alpine
-    container_name: conexiones_dev_redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    container_name: nucleoisp_dev_redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
+    logging: *logging
 
   db:
-    image: postgres:17.5
-    container_name: conexiones_dev_db
+    image: postgres:17
+    container_name: nucleoisp_dev_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     env_file:
       - .env.dev
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
+    logging: *logging
 
   celery_worker:
-    build: .
-    container_name: conexiones_dev_celery_worker
-    command: uv run celery -A conexiones worker -l info
+    image: nucleoisp:dev
+    pull_policy: never
+    container_name: nucleoisp_dev_celery_worker
+    command: celery -A conexiones worker -l info
     volumes:
       - ./:/app
       - /app/.venv
-      - /app/.uv-cache
     env_file:
       - .env.dev
     environment:
       POSTGRES_HOST: db
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    logging: *logging
 
   celery_beat:
-    build: .
-    container_name: conexiones_dev_celery_beat
-    command: uv run celery -A conexiones beat -l info
+    image: nucleoisp:dev
+    pull_policy: never
+    container_name: nucleoisp_dev_celery_beat
+    command: celery -A conexiones beat -l info -s /tmp/celerybeat-schedule
     volumes:
       - ./:/app
       - /app/.venv
-      - /app/.uv-cache
     env_file:
       - .env.dev
     environment:
       POSTGRES_HOST: db
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    logging: *logging
 
   wg-easy:
-    image: ghcr.io/wg-easy/wg-easy
-    container_name: conexiones_dev_wg_easy
+    image: ghcr.io/wg-easy/wg-easy:14
+    container_name: nucleoisp_dev_wg_easy
     env_file:
       - .env.dev
     environment:
@@ -79,7 +133,7 @@ services:
       - WG_DEFAULT_DNS=1.1.1.1
     ports:
       - "51820:51820/udp"
-      - "51821:51821/tcp"
+      - "127.0.0.1:51821:51821/tcp"
     privileged: true
     cap_add:
       - NET_ADMIN
@@ -90,6 +144,7 @@ services:
     volumes:
       - wg_easy_data_dev:/etc/wireguard
       - /lib/modules:/lib/modules:ro
+    logging: *logging
 
 volumes:
   postgres_data_dev:
