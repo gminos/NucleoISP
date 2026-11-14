@@ -14,16 +14,30 @@ services:
       POSTGRES_HOST: db
       RUN_MIGRATIONS: "true"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: always
 
   redis:
     image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     container_name: nucleoisp_prod_redis
     restart: always
 
   db:
     image: postgres:17.5
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     container_name: nucleoisp_prod_db
     env_file:
       - .env
@@ -58,8 +72,10 @@ services:
     environment:
       POSTGRES_HOST: db
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: always
 
   celery_beat:
@@ -74,8 +90,10 @@ services:
     environment:
       POSTGRES_HOST: db
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: always
 
   wg-easy:

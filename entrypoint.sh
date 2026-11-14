@@ -2,11 +2,6 @@
 
 set -e
 
-echo "tranqui... se esta esperando la base datos"
-while ! nc -z db 5432; do
-  sleep 1
-done
-
 if [ "$RUN_MIGRATIONS" = "true" ]; then
     echo "se empieza a aplicar migraciones"
     chown -R $(stat -c '%u:%g' /app) /app/.venv 2>/dev/null || true
