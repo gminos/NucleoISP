@@ -4,8 +4,8 @@ services:
     pull_policy: never
     container_name: nucleoisp_dev_migrate
     command: >
-      sh -c "uv run python manage.py migrate_schemas --shared &&
-      uv run python manage.py migrate_schemas --tenant"
+      sh -c "python manage.py migrate_schemas --shared &&
+      python manage.py migrate_schemas --tenant"
     volumes:
       - ./:/app
       - /app/.venv
@@ -19,10 +19,13 @@ services:
     restart: "no"
 
   web:
-    build: .
+    build:
+      context: .
+      args:
+        UV_NO_DEV: "0"
     image: nucleoisp:dev
     container_name: nucleoisp_dev_web
-    command: uv run python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./:/app
       - /app/.venv
@@ -71,7 +74,7 @@ services:
     image: nucleoisp:dev
     pull_policy: never
     container_name: nucleoisp_dev_celery_worker
-    command: uv run celery -A conexiones worker -l info
+    command: celery -A conexiones worker -l info
     volumes:
       - ./:/app
       - /app/.venv
@@ -91,7 +94,7 @@ services:
     image: nucleoisp:dev
     pull_policy: never
     container_name: nucleoisp_dev_celery_beat
-    command: uv run celery -A conexiones beat -l info -s /tmp/celerybeat-schedule
+    command: celery -A conexiones beat -l info -s /tmp/celerybeat-schedule
     volumes:
       - ./:/app
       - /app/.venv
