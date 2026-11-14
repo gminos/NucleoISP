@@ -72,7 +72,7 @@ services:
       - redis
 
   wg-easy:
-    image: ghcr.io/wg-easy/wg-easy
+    image: ghcr.io/wg-easy/wg-easy:14
     container_name: conexiones_dev_wg_easy
     env_file:
       - .env.dev
