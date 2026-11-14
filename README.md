@@ -86,6 +86,11 @@ Levantar los contenedores:
 docker compose -f docker-compose.dev.yml up -d --build
 ```
 
+Si cambian las dependencias (`uv.lock`), agregar `-V` para recrear el volumen anonimo de `.venv`; sin el, los contenedores conservan el entorno anterior:
+```bash
+docker compose -f docker-compose.dev.yml up -d --build -V
+```
+
 4. **Inicialización de la arquitectura multi-tenant:**
 
 1. Crea el inquilino principal para la administración central:
