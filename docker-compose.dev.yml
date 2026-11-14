@@ -1,3 +1,9 @@
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   migrate:
     image: nucleoisp:dev
@@ -17,6 +23,7 @@ services:
       db:
         condition: service_healthy
     restart: "no"
+    logging: *logging
 
   web:
     build:
@@ -42,6 +49,7 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    logging: *logging
 
   redis:
     image: redis:7-alpine
@@ -53,6 +61,7 @@ services:
     container_name: nucleoisp_dev_redis
     ports:
       - "127.0.0.1:6379:6379"
+    logging: *logging
 
   db:
     image: postgres:17
@@ -69,6 +78,7 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
+    logging: *logging
 
   celery_worker:
     image: nucleoisp:dev
@@ -89,6 +99,7 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    logging: *logging
 
   celery_beat:
     image: nucleoisp:dev
@@ -109,6 +120,7 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    logging: *logging
 
   wg-easy:
     image: ghcr.io/wg-easy/wg-easy:14
@@ -132,6 +144,7 @@ services:
     volumes:
       - wg_easy_data_dev:/etc/wireguard
       - /lib/modules:/lib/modules:ro
+    logging: *logging
 
 volumes:
   postgres_data_dev:
