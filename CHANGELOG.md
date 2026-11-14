@@ -6,9 +6,45 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-14
+
+Version mayor: actualizar un despliegue existente requiere intervencion manual (ver "Notas de migracion").
+
+### Añadido
+- **Docker (servicio `migrate`):** Nuevo servicio de una sola ejecucion que aplica `migrate_schemas --shared` y `--tenant` (y en produccion `collectstatic`). `web`, `celery_worker` y `celery_beat` esperan a que termine con exito.
+- **Docker (healthchecks):** `db` (`pg_isready`) y `redis` (`redis-cli ping`) tienen healthcheck; los servicios dependientes arrancan solo cuando estan sanos.
+- **Docker (logs):** Rotacion de logs `json-file` en todos los contenedores (3 archivos de 10 MB como maximo).
+- **Configuracion:** Variables `WEB_CONCURRENCY` (workers de gunicorn, por defecto 3) y `CELERY_WORKER_CONCURRENCY` (procesos del worker, por defecto 2), en lugar de derivarlos de la cantidad de CPU.
+- **Documentacion:** `CELERY_WORKER_CONCURRENCY` en la plantilla `.env.dev` del `README.md` y uso de `up -d --build -V` cuando cambian las dependencias.
+
 ### Cambiado
+- **Docker (imagen):** Imagen base `python:3.13-slim-trixie` con `uv` 0.13.8 copiado desde su imagen oficial. Dependencias instaladas con `uv sync --locked`, bytecode precompilado y paquetes del sistema sin recomendados.
+- **Docker (imagen unica):** `web`, `celery_worker`, `celery_beat` y `migrate` comparten una sola imagen (`nucleoisp:latest` en produccion, `nucleoisp:dev` en desarrollo) en vez de construir una por servicio.
+- **Docker (nombres):** Los contenedores pasan del prefijo `conexiones_` a `nucleoisp_`.
+- **Docker (comandos):** Los procesos se ejecutan directamente desde el entorno virtual, sin `uv run` (por ejemplo `python manage.py ...`).
+- **Docker (versiones):** `postgres:17.5` pasa a `postgres:17` (recibe parches de la 17 sin cambiar de version mayor), `nginx:alpine` se fija en `nginx:1.30-alpine` y `wg-easy` en la version 14.
+- **Celery beat:** El archivo de programacion se guarda en `/tmp/celerybeat-schedule`; se pierde al reiniciar el contenedor, lo cual no afecta a las tareas `crontab`.
+- **Docker (`.dockerignore`):** Depurado; ahora excluye tambien `.env.*`, `CHANGELOG.md`, `media/`, `staticfiles/` y `celerybeat-schedule*`.
 - **Identidad visual:** Se rediseno el logotipo de NucleoISP (una "N" de red entre dos nodos, en la paleta verde del panel) y se agrego una variante para fondo oscuro (`logo-dark.svg`). El panel de administracion muestra la variante oscura en modo oscuro y el `README.md` elige el logotipo segun el tema claro u oscuro.
 - **Refactorizacion:** Se extrajo la funcion auxiliar `_resolver_logo` en `conexiones/settings.py` para no duplicar la logica que decide entre el logo del inquilino y el logo por defecto.
+
+### Eliminado
+- **Docker:** `entrypoint.sh`, la variable `RUN_MIGRATIONS` y la dependencia de `netcat` (reemplazados por el servicio `migrate` y los healthchecks).
+- **Docker:** Volumen `uv-cache` y variables de postgres duplicadas en `docker-compose.dev.yml`.
+
+### Corregido
+- **Docker (produccion):** Se eliminaron los bind mounts del codigo; el contenedor ejecuta el codigo incluido en la imagen.
+- **Docker (produccion):** La imagen instala solo dependencias de produccion (sin `django-debug-toolbar`). Por ello no debe ejecutarse con `DJANGO_DEBUG=true`.
+
+### Seguridad
+- **Docker:** Los contenedores se ejecutan con el usuario sin privilegios `app` (UID/GID 1000, configurables con los argumentos de build `APP_UID` y `APP_GID`).
+- **Docker:** En desarrollo, los puertos de web, postgres, redis y la interfaz de wg-easy solo escuchan en `127.0.0.1`.
+
+### Notas de migracion
+- Reconstruir la imagen: `docker compose up -d --build`. Los contenedores con nombre `conexiones_*` deben eliminarse (`docker compose down` con la version anterior) y actualizar cualquier script que use esos nombres.
+- Los volumenes `media_data` y `static_data` creados por la version anterior pertenecen a root; ajustar el propietario antes de arrancar, por ejemplo: `docker run --rm -v <proyecto>_media_data:/data alpine chown -R 1000:1000 /data` (igual con `static_data`).
+- Quitar `RUN_MIGRATIONS` del `.env`; las migraciones las ejecuta el servicio `migrate` en cada arranque.
+- Reemplazar `uv run python manage.py` por `python manage.py` en los comandos `docker compose exec`.
 
 ## [2.4.0] - 2026-11-13
 
