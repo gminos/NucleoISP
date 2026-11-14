@@ -74,6 +74,9 @@ PASSWORD_HASH=$$2a$$12$$F9Uc/Tf81FZNpKT6gYzLFORiqrvLHlo1xmxGa0XbJIWgfopdSQv9O
 
 # Configuracion whatsapp (solo funciona con DJANGO_DEBUG=true)
 WHATSAPP_SIMULATION_MODE=true
+
+# Configuracion celery (procesos del worker, por defecto 2)
+CELERY_WORKER_CONCURRENCY=2
 ```
 
 3. **Construcción y arranque de contenedores:**
