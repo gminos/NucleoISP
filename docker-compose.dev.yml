@@ -10,7 +10,7 @@ services:
     env_file:
       - .env.dev
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       POSTGRES_HOST: db
       RUN_MIGRATIONS: "true"
@@ -21,7 +21,7 @@ services:
     image: redis:7-alpine
     container_name: conexiones_dev_redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
 
   db:
     image: postgres:17.5
@@ -33,7 +33,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
 
@@ -82,7 +82,7 @@ services:
       - WG_DEFAULT_DNS=1.1.1.1
     ports:
       - "51820:51820/udp"
-      - "51821:51821/tcp"
+      - "127.0.0.1:51821:51821/tcp"
     privileged: true
     cap_add:
       - NET_ADMIN
