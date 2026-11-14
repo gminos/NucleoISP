@@ -1,6 +1,7 @@
 services:
   web:
     build: .
+    image: nucleoisp:latest
     container_name: conexiones_prod_web
     volumes:
       - static_data:/app/staticfiles
@@ -46,7 +47,8 @@ services:
     restart: always
 
   celery_worker:
-    build: .
+    image: nucleoisp:latest
+    pull_policy: never
     container_name: conexiones_prod_celery_worker
     command: uv run celery -A conexiones worker -l info
     volumes:
@@ -61,7 +63,8 @@ services:
     restart: always
 
   celery_beat:
-    build: .
+    image: nucleoisp:latest
+    pull_policy: never
     container_name: conexiones_prod_celery_beat
     command: uv run celery -A conexiones beat -l info
     volumes:

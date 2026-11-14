@@ -1,6 +1,7 @@
 services:
   web:
     build: .
+    image: nucleoisp:dev
     container_name: conexiones_dev_web
     command: uv run python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -37,7 +38,8 @@ services:
       - postgres_data_dev:/var/lib/postgresql/data
 
   celery_worker:
-    build: .
+    image: nucleoisp:dev
+    pull_policy: never
     container_name: conexiones_dev_celery_worker
     command: uv run celery -A conexiones worker -l info
     volumes:
@@ -53,7 +55,8 @@ services:
       - redis
 
   celery_beat:
-    build: .
+    image: nucleoisp:dev
+    pull_policy: never
     container_name: conexiones_dev_celery_beat
     command: uv run celery -A conexiones beat -l info
     volumes:
