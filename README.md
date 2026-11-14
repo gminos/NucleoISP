@@ -87,12 +87,12 @@ docker compose -f docker-compose.dev.yml up -d --build
 
 1. Crea el inquilino principal para la administración central:
    ```bash
-   docker compose -f docker-compose.dev.yml exec web uv run python manage.py create_tenant --schema_name=public --domain-domain=localhost --domain-is_primary=True --name="NucleoISP Central"
+   docker compose -f docker-compose.dev.yml exec web python manage.py create_tenant --schema_name=public --domain-domain=localhost --domain-is_primary=True --name="NucleoISP Central"
    ```
 
 2. Crea el usuario administrador maestro:
    ```bash
-   docker compose -f docker-compose.dev.yml exec web uv run python manage.py create_tenant_superuser --schema_name=public
+   docker compose -f docker-compose.dev.yml exec web python manage.py create_tenant_superuser --schema_name=public
    ```
 
 5. **Acceso al panel central:**
