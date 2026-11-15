@@ -1,0 +1,155 @@
+{% load unfold %}
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+    {% component "admin/dashboard/_tarjeta.html" with href=kpi.cobrado.href %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-2">Cobrado este mes</p>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+            {% component "unfold/components/title.html" %}{{ kpi.cobrado.valor }}{% endcomponent %}
+            {% if kpi.cobrado.variacion %}
+                {% include "unfold/helpers/label.html" with variant=kpi.cobrado.variacion.variante icon=kpi.cobrado.variacion.icono text=kpi.cobrado.variacion.valor label_title="Frente al mismo periodo del mes anterior" size="md" %}
+            {% endif %}
+        </div>
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ kpi.cobrado.detalle }}</p>
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" with href=kpi.cartera.href %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-2">Por cobrar</p>
+        <div class="mb-2">
+            {% component "unfold/components/title.html" %}{{ kpi.cartera.valor }}{% endcomponent %}
+        </div>
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">
+            {% if kpi.cartera.hay_vencido %}
+                Vencido: <strong class="font-semibold text-red-600 dark:text-red-400">{{ kpi.cartera.vencido }}</strong> -
+            {% endif %}
+            {{ kpi.cartera.detalle }}
+        </p>
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" with href=kpi.servicios.href %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-2">Servicios activos</p>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+            {% component "unfold/components/title.html" %}{{ kpi.servicios.valor }}{% endcomponent %}
+            {% if kpi.servicios.variacion %}
+                {% include "unfold/helpers/label.html" with variant=kpi.servicios.variacion.variante icon=kpi.servicios.variacion.icono text=kpi.servicios.variacion.valor label_title="Altas frente al mismo periodo del mes anterior" size="md" %}
+            {% endif %}
+        </div>
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">
+            {{ kpi.servicios.altas_mes }} - {{ kpi.servicios.suspendidos }}
+        </p>
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mt-1">
+            Ingreso mensual esperado: <strong class="whitespace-nowrap font-semibold text-font-important-light dark:text-font-important-dark">{{ kpi.servicios.recurrente }}</strong>
+        </p>
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-2">Recaudo de lo facturado este mes</p>
+        <div class="mb-3">
+            {% component "unfold/components/title.html" %}{{ kpi.recaudo.valor }}{% endcomponent %}
+        </div>
+        {% include "admin/dashboard/_barra.html" with valor=kpi.recaudo.progreso class="mb-2" %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ kpi.recaudo.detalle }}</p>
+    {% endcomponent %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    {% component "admin/dashboard/_tarjeta.html" with title="Facturado vs. cobrado" class="lg:col-span-2" %}
+        <div class="flex items-center gap-4 mb-4 text-sm text-font-subtle-light dark:text-font-subtle-dark">
+            <span class="flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-primary-600"></span>Cobrado</span>
+            <span class="flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full bg-primary-200"></span>Facturado</span>
+        </div>
+        {% component "unfold/components/chart/bar.html" with data=grafica_facturacion height=260 %}{% endcomponent %}
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" with title="Deuda por dias de atraso" %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-4">Del total por cobrar, cuanto aun no vence y cuanto lleva tiempo sin pagarse.</p>
+        <div class="flex flex-col gap-4">
+            {% for tramo in cartera_tramos %}
+                {% include "admin/dashboard/_barra.html" with titulo=tramo.etiqueta detalle=tramo.monto valor=tramo.porcentaje color=tramo.color %}
+            {% endfor %}
+        </div>
+    {% endcomponent %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    {% component "admin/dashboard/_tarjeta.html" with title="Mayores deudores" %}
+        {% if mayores_deudores %}
+            <ul class="-my-2">
+                {% for deudor in mayores_deudores %}
+                    <li class="flex items-center gap-3 py-2 border-b border-base-200 last:border-b-0 dark:border-base-800">
+                        <a href="{{ deudor.href }}" class="min-w-0 truncate font-medium text-font-important-light dark:text-font-important-dark" title="Cobrar en caja rapida">{{ deudor.cliente }}</a>
+                        <span class="ml-auto whitespace-nowrap font-semibold text-font-important-light dark:text-font-important-dark">{{ deudor.deuda }}</span>
+                        {% if deudor.dias %}
+                            {% include "unfold/helpers/label.html" with variant="danger" text=deudor.dias_texto label_title="Dias desde el vencimiento mas antiguo" size="md" %}
+                        {% else %}
+                            {% include "unfold/helpers/label.html" with variant="primary" text="Aun no vence" size="md" %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Ningun cliente tiene saldo pendiente.</p>
+        {% endif %}
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" with title="Pendientes de suspension" %}
+        {% if por_suspender.filas %}
+            <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-2">
+                {{ por_suspender.total }} servicio{{ por_suspender.total|pluralize }} se suspendera{{ por_suspender.total|pluralize:"n" }} en la proxima ejecucion automatica si no se registra el pago.
+            </p>
+            <ul class="-mb-2">
+                {% for fila in por_suspender.filas %}
+                    <li class="flex items-center gap-3 py-2 border-b border-base-200 last:border-b-0 dark:border-base-800">
+                        <a href="{{ fila.href }}" class="min-w-0 truncate font-medium text-font-important-light dark:text-font-important-dark">{{ fila.cliente }}</a>
+                        <span class="ml-auto whitespace-nowrap text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ fila.plan }}</span>
+                        {% include "unfold/helpers/label.html" with variant="warning" text=fila.dias_texto label_title="Dias de vencida" size="md" %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">No hay servicios activos con mensualidad vencida.</p>
+        {% endif %}
+        <p class="text-sm mt-3">
+            <a href="{{ kpi.servicios.href_suspendidos }}" class="text-primary-600 dark:text-primary-500 font-medium">Ver servicios suspendidos</a>
+        </p>
+    {% endcomponent %}
+
+    {% if uso_paquete %}
+        {% component "admin/dashboard/_tarjeta.html" with title="Uso del paquete" %}
+            <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-4">Paquete contratado: <strong class="font-semibold text-font-important-light dark:text-font-important-dark">{{ uso_paquete.nombre }}</strong></p>
+            <div class="flex flex-col gap-4">
+                {% if uso_paquete.clientes_ilimitados %}
+                    <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Clientes: <strong class="font-semibold text-font-important-light dark:text-font-important-dark">{{ uso_paquete.clientes }}</strong> (sin limite)</p>
+                {% else %}
+                    {% include "admin/dashboard/_barra.html" with titulo="Clientes" detalle=uso_paquete.detalle_clientes valor=uso_paquete.progreso_clientes %}
+                {% endif %}
+                {% include "admin/dashboard/_barra.html" with titulo="Routers" detalle=uso_paquete.detalle_routers valor=uso_paquete.progreso_routers %}
+            </div>
+        {% endcomponent %}
+    {% endif %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    {% component "admin/dashboard/_tarjeta.html" with title="Instalaciones nuevas por mes" %}
+        {% component "unfold/components/chart/bar.html" with data=grafica_altas height=220 %}{% endcomponent %}
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" with title="Servicios activos por plan" %}
+        <div class="flex flex-col gap-4">
+            {% for fila in planes %}
+                {% include "admin/dashboard/_barra.html" with titulo=fila.etiqueta detalle=fila.detalle valor=fila.porcentaje %}
+            {% empty %}
+                <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">No hay servicios activos.</p>
+            {% endfor %}
+        </div>
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" with title="Servicios activos por vereda" %}
+        <div class="flex flex-col gap-4">
+            {% for fila in veredas %}
+                {% include "admin/dashboard/_barra.html" with titulo=fila.etiqueta detalle=fila.detalle valor=fila.porcentaje %}
+            {% empty %}
+                <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">No hay servicios activos.</p>
+            {% endfor %}
+        </div>
+    {% endcomponent %}
+</div>
