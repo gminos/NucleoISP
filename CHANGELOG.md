@@ -6,6 +6,29 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-11-15
+
+### Añadido
+- **Panel de control (inquilino):** Indicadores del mes en curso: cobrado (con variacion frente al mismo tramo de dias del mes anterior y reparto por metodo de pago), cartera por cobrar con monto vencido, servicios activos con altas del mes, suspendidos e ingreso mensual esperado, y porcentaje recaudado de lo facturado en el mes.
+- **Panel de control (inquilino):** Grafica de facturado vs. cobrado de los ultimos 12 meses, deuda por dias de atraso (aun no vence, 1-30, 31-60, 61-90 y mas de 90 dias), mayores deudores con enlace a caja rapida, servicios con mensualidad vencida pendientes de suspension y uso del paquete contratado (clientes y routers).
+- **Panel de control (maestro):** Empresas por estado de cuenta, ingreso mensual esperado de paquetes y routers extra, empresas con pago vencido o por vencer en 7 dias y uso del limite de clientes por empresa.
+- **Pruebas:** Pruebas unitarias de las funciones auxiliares del panel (`base/tests.py`).
+
+### Cambiado
+- **Panel de control:** Se redisena con los componentes de Unfold (graficas, titulos y etiquetas), usando el Chart.js incluido en Unfold en lugar del CDN sin version fija. Las tarjetas y barras de progreso son plantillas propias con la misma estructura que las de Unfold, pero con un fondo que contrasta con la pagina en modo oscuro. Las graficas siguen el color primario.
+- **Panel de control:** Las distribuciones por plan y por vereda se muestran como barras ordenadas (las veredas fuera de las 8 principales se agrupan en "Otras") en lugar de graficas de torta.
+- **Panel de control:** Los montos usan el formato de la plataforma (`$ 1.250.000`).
+- **Refactorizacion:** El calculo de metricas se movio de `base/views.py` al paquete `base/dashboard/` y la plantilla se dividio en `templates/admin/dashboard/inquilino.html` y `maestro.html`.
+
+### Eliminado
+- **Panel de control:** Objetivo fijo de 100 servicios, que era igual para todos los inquilinos (reemplazado por el uso del paquete contratado), y los totales historicos de pagos e instalaciones.
+
+### Corregido
+- **Panel de control:** Los meses sin movimientos aparecen en cero en las graficas en lugar de desaparecer del eje.
+- **Panel de control:** Los nombres de los meses se muestran en español; antes dependian del locale del sistema.
+- **Panel de control:** "Instalaciones en año actual" contaba solo servicios activos, a diferencia de su ingreso asociado.
+- **Panel de control:** Las graficas no tenian altura y algunos colores no se aplicaban, porque usaban clases que no existen en la hoja de estilos de Unfold (`h-64`, `text-green-600`).
+
 ## [3.0.0] - 2026-11-14
 
 Version mayor: actualizar un despliegue existente requiere intervencion manual (ver "Notas de migracion").
