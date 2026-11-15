@@ -1,0 +1,68 @@
+{% load unfold %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    {% component "admin/dashboard/_tarjeta.html" with href=kpi.empresas.href %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-2">Empresas ISP</p>
+        <div class="mb-2">
+            {% component "unfold/components/title.html" %}{{ kpi.empresas.valor }}{% endcomponent %}
+        </div>
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ kpi.empresas.detalle }}</p>
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-3">Estado de las cuentas</p>
+        <div class="flex flex-wrap items-center gap-3">
+            {% for estado in kpi.estados %}
+                <a href="{{ estado.href }}" class="flex items-center gap-2">
+                    {% component "unfold/components/title.html" %}{{ estado.valor }}{% endcomponent %}
+                    {% include "unfold/helpers/label.html" with variant=estado.variante text=estado.etiqueta size="md" %}
+                </a>
+            {% endfor %}
+        </div>
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" %}
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark mb-2">Ingreso mensual esperado</p>
+        <div class="mb-2">
+            {% component "unfold/components/title.html" %}{{ kpi.ingreso.valor }}{% endcomponent %}
+        </div>
+        <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ kpi.ingreso.detalle }}</p>
+    {% endcomponent %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    {% component "admin/dashboard/_tarjeta.html" with title="Pagos vencidos o por vencer (7 dias)" %}
+        {% if vencimientos %}
+            <ul class="-my-2">
+                {% for fila in vencimientos %}
+                    <li class="flex items-center gap-3 py-2 border-b border-base-200 last:border-b-0 dark:border-base-800">
+                        <div class="min-w-0">
+                            <a href="{{ fila.href }}" class="block truncate font-medium text-font-important-light dark:text-font-important-dark">{{ fila.empresa }}</a>
+                            <span class="text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ fila.cuando }} ({{ fila.fecha|date:"d/m/Y" }})</span>
+                        </div>
+                        <span class="ml-auto whitespace-nowrap font-semibold text-font-important-light dark:text-font-important-dark">{{ fila.monto }}</span>
+                        {% include "unfold/helpers/label.html" with variant=fila.variante text=fila.estado size="md" %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">Ninguna empresa tiene pagos vencidos ni por vencer esta semana.</p>
+        {% endif %}
+    {% endcomponent %}
+
+    {% component "admin/dashboard/_tarjeta.html" with title="Uso del limite de clientes" %}
+        {% if uso_cupo %}
+            <div class="flex flex-col gap-4">
+                {% for fila in uso_cupo %}
+                    {% if fila.alerta %}
+                        {% include "admin/dashboard/_barra.html" with titulo=fila.empresa detalle=fila.detalle valor=fila.progreso color="bg-red-600" %}
+                    {% else %}
+                        {% include "admin/dashboard/_barra.html" with titulo=fila.empresa detalle=fila.detalle valor=fila.progreso %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">No hay empresas con limite de clientes.</p>
+        {% endif %}
+    {% endcomponent %}
+</div>

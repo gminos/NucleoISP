@@ -1,0 +1,10 @@
+<{% if href %}a href="{{ href }}"{% else %}div{% endif %} class="bg-white block flex flex-col grow overflow-hidden p-6 relative rounded-default border border-base-200 shadow-xs dark:bg-base-800 dark:border-base-700 {% if href %}cursor-pointer transition-all hover:border-base-300 hover:shadow-md dark:hover:border-base-700 {% endif %}{% if class %} {{ class }}{% endif %}">
+    {% if title %}
+        <div class="border-b border-base-200 flex flex-row items-center mb-6 -mt-6 -mx-6 py-4 px-6 dark:border-base-700">
+            <h2 class="font-semibold text-[15px] text-important">{{ title }}</h2>
+        </div>
+    {% endif %}
+    <div class="grow relative">
+        {{ children }}
+    </div>
+</{% if href %}a{% else %}div{% endif %}>
