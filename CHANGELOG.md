@@ -6,6 +6,11 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-11-15
+
+### Corregido
+- **Panel de control:** Las tarjetas "Cobrado este mes" y "Servicios activos" se desarmaban cuando mostraban la variacion frente al mes anterior: la etiqueta heredaba el enlace de la tarjeta y quedaba un enlace dentro de otro.
+
 ## [3.1.0] - 2026-11-15
 
 ### Añadido

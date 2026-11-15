@@ -6,7 +6,7 @@
         <div class="flex flex-wrap items-center gap-2 mb-2">
             {% component "unfold/components/title.html" %}{{ kpi.cobrado.valor }}{% endcomponent %}
             {% if kpi.cobrado.variacion %}
-                {% include "unfold/helpers/label.html" with variant=kpi.cobrado.variacion.variante icon=kpi.cobrado.variacion.icono text=kpi.cobrado.variacion.valor label_title="Frente al mismo periodo del mes anterior" size="md" %}
+                {% include "unfold/helpers/label.html" with href="" variant=kpi.cobrado.variacion.variante icon=kpi.cobrado.variacion.icono text=kpi.cobrado.variacion.valor label_title="Frente al mismo periodo del mes anterior" size="md" %}
             {% endif %}
         </div>
         <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ kpi.cobrado.detalle }}</p>
@@ -30,7 +30,7 @@
         <div class="flex flex-wrap items-center gap-2 mb-2">
             {% component "unfold/components/title.html" %}{{ kpi.servicios.valor }}{% endcomponent %}
             {% if kpi.servicios.variacion %}
-                {% include "unfold/helpers/label.html" with variant=kpi.servicios.variacion.variante icon=kpi.servicios.variacion.icono text=kpi.servicios.variacion.valor label_title="Altas frente al mismo periodo del mes anterior" size="md" %}
+                {% include "unfold/helpers/label.html" with href="" variant=kpi.servicios.variacion.variante icon=kpi.servicios.variacion.icono text=kpi.servicios.variacion.valor label_title="Altas frente al mismo periodo del mes anterior" size="md" %}
             {% endif %}
         </div>
         <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">
