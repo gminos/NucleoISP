@@ -76,14 +76,18 @@ services:
     restart: always
     logging: *logging
 
-  nginx:
-    image: nginx:1.30-alpine
-    container_name: nucleoisp_prod_nginx
+  caddy:
+    image: caddy:2.11-alpine
+    container_name: nucleoisp_prod_caddy
     ports:
+      - "443:443"
+      - "443:443/udp"
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - static_data:/app/staticfiles
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - static_data:/app/staticfiles:ro
       - media_data:/app/media:ro
     depends_on:
       - web
@@ -162,3 +166,5 @@ volumes:
   postgres_data:
   wg_easy_data:
   media_data:
+  caddy_data:
+  caddy_config:
