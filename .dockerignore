@@ -7,7 +7,7 @@
 
 Dockerfile
 docker-compose*.yml
-Caddyfile
+caddy/
 README.md
 CHANGELOG.md
 

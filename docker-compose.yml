@@ -77,14 +77,15 @@ services:
     logging: *logging
 
   caddy:
-    image: caddy:2.11-alpine
+    build: ./caddy
+    image: nucleoisp-caddy:2.11.9-cloudflare
     container_name: nucleoisp_prod_caddy
     ports:
       - "443:443"
       - "443:443/udp"
       - "80:80"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
       - static_data:/app/staticfiles:ro
