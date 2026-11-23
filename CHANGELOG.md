@@ -6,6 +6,35 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-11-22
+
+Version mayor: actualizar un despliegue existente requiere intervencion manual (ver "Notas de migracion").
+
+### Añadido
+- **HTTPS en produccion:** Caddy termina el TLS con un certificado wildcard de Let's Encrypt para el dominio base y todos sus subdominios, obtenido y renovado automaticamente con el desafio DNS-01 a traves de la API de Cloudflare. Cada inquilino nuevo queda cubierto sin tocar Caddy ni el DNS. Las peticiones por HTTP se redirigen a HTTPS y se habilita HTTP/3.
+- **Docker (imagen de Caddy):** `caddy/Dockerfile` compila Caddy 2.11.9 con el modulo `caddy-dns/cloudflare` v0.2.4 en una etapa aparte y copia solo el binario sobre `caddy:2.11.9-alpine` (imagen `nucleoisp-caddy:2.11.9-cloudflare`).
+- **Configuracion:** Variables `DOMINIO_BASE`, `CF_API_TOKEN` y `ACME_EMAIL` para Caddy, y `SECURE_HSTS_SECONDS` (por defecto 3600) para Django.
+- **Documentacion:** Seccion de despliegue en produccion en el `README.md`: requisitos de DNS y del token de Cloudflare, variables, arranque, inicializacion del inquilino publico y advertencias de `check --deploy` omitidas a proposito.
+
+### Cambiado
+- **Docker (proxy):** El servicio `nginx` se reemplaza por `caddy`, que publica los puertos 80 y 443 (TCP y UDP) y guarda certificados y configuracion en los volumenes `caddy_data` y `caddy_config`.
+- **Django detras del proxy:** Con `DJANGO_DEBUG=false` se confia en `X-Forwarded-Proto` del proxy (`SECURE_PROXY_SSL_HEADER`), de modo que Django reconoce las peticiones HTTPS y la verificacion CSRF funciona en los subdominios de los inquilinos.
+
+### Eliminado
+- **Docker:** `nginx.conf` y el servicio `nginx`.
+- **Configuracion:** Definiciones duplicadas de `USE_TZ` y `LOCALE_PATHS` en `conexiones/settings.py`.
+
+### Seguridad
+- **Django (produccion):** Las cookies de sesion y CSRF se marcan `Secure` y se envia HSTS con `includeSubDomains`. No se activan `SECURE_SSL_REDIRECT` (la redireccion la hace Caddy) ni `SECURE_HSTS_PRELOAD`.
+- **Caddy:** Recibe solo `CF_API_TOKEN`, `DOMINIO_BASE` y `ACME_EMAIL`, no el archivo de entorno completo; el token se lee en tiempo de ejecucion y no queda escrito en la configuracion cargada. Los volumenes de estaticos y media se montan en solo lectura.
+
+### Notas de migracion
+- Requisitos: dominio con el DNS en Cloudflare, registros `A` para el dominio base y para `*` en modo "Solo DNS" y un token de API con permisos Zona: Leer y DNS: Editar limitado a la zona. Los puertos 80 y 443 del servidor deben quedar libres para Caddy.
+- Agregar al `.env` `DOMINIO_BASE`, `CF_API_TOKEN` y `ACME_EMAIL`; sin ellas `docker compose` no arranca. Agregar el dominio a `DJANGO_ALLOWED_HOSTS` con un punto al inicio (`.tudominio.com`).
+- Eliminar el contenedor de nginx de la version anterior: `docker compose down --remove-orphans` y luego `docker compose up -d --build`.
+- El inquilino publico debe tener el dominio base como dominio principal, y cada inquilino existente su subdominio `slug.tudominio.com`. En una instalacion que use `localhost`, agregar los dominios nuevos como principales; los anteriores quedan como secundarios.
+- Despues de cambiar el `.env`, recrear los servicios (`docker compose up -d --force-recreate`): `restart` no vuelve a leer las variables.
+
 ## [3.1.1] - 2026-11-15
 
 ### Corregido
