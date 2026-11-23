@@ -409,9 +409,6 @@ CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://redis:6379/0")
 CELERY_WORKER_CONCURRENCY = int(os.getenv("CELERY_WORKER_CONCURRENCY", "2"))
 CELERY_TIMEZONE = TIME_ZONE
 
-# Default configuration (from env or defaults)
-USE_TZ = True
-
 if DEBUG:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(2, "debug_toolbar.middleware.DebugToolbarMiddleware")
@@ -424,5 +421,3 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Soporte NucleoISP <no-reply@nucleoisp.com>")
-
-LOCALE_PATHS = [BASE_DIR / 'locale']
