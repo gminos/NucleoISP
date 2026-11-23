@@ -80,6 +80,10 @@ services:
     build: ./caddy
     image: nucleoisp-caddy:2.11.9-cloudflare
     container_name: nucleoisp_prod_caddy
+    environment:
+      CF_API_TOKEN: ${CF_API_TOKEN:?falta CF_API_TOKEN en .env}
+      DOMINIO_BASE: ${DOMINIO_BASE:?falta DOMINIO_BASE en .env}
+      ACME_EMAIL: ${ACME_EMAIL:?falta ACME_EMAIL en .env}
     ports:
       - "443:443"
       - "443:443/udp"

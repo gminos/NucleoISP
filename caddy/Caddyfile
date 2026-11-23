@@ -1,4 +1,8 @@
-localhost, megared.localhost {
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMINIO_BASE}, *.{$DOMINIO_BASE} {
 	handle_path /static/* {
 		root /app/staticfiles/
 		file_server
@@ -11,5 +15,9 @@ localhost, megared.localhost {
 
 	handle {
 		reverse_proxy web:8000
+	}
+
+	tls {
+		dns cloudflare {env.CF_API_TOKEN}
 	}
 }
