@@ -7,7 +7,7 @@
 
 Dockerfile
 docker-compose*.yml
-nginx.conf
+caddy/
 README.md
 CHANGELOG.md
 

@@ -33,6 +33,13 @@ DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "3600"))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
 INTERNAL_IPS = ["127.0.0.1"]
 
 WHATSAPP_SIMULATION_MODE = os.getenv("WHATSAPP_SIMULATION_MODE", "false").lower() == "true" and DEBUG
@@ -402,9 +409,6 @@ CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://redis:6379/0")
 CELERY_WORKER_CONCURRENCY = int(os.getenv("CELERY_WORKER_CONCURRENCY", "2"))
 CELERY_TIMEZONE = TIME_ZONE
 
-# Default configuration (from env or defaults)
-USE_TZ = True
-
 if DEBUG:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(2, "debug_toolbar.middleware.DebugToolbarMiddleware")
@@ -417,5 +421,3 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Soporte NucleoISP <no-reply@nucleoisp.com>")
-
-LOCALE_PATHS = [BASE_DIR / 'locale']
