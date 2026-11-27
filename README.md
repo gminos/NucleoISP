@@ -176,6 +176,7 @@ docker compose exec web python manage.py create_tenant_superuser --schema_name=p
 
 * La imagen de Caddy se compila con el modulo de Cloudflare (`caddy/Dockerfile`). Para actualizarla, cambiar la version en los dos `FROM` y en el nombre de la imagen del compose, y reconstruir con `docker compose build caddy`.
 * El volumen `caddy_data` guarda los certificados y la cuenta de Let's Encrypt; debe persistir entre despliegues.
+* El favicon por defecto (`base/static/images/favicon.svg`) se adapta solo al tema claro u oscuro del navegador. Si un inquilino sube su propio logo, se usa tal cual como favicon y en el encabezado con ambos temas, sin generar una version oscura: conviene que sea legible sobre fondo claro y oscuro (por ejemplo con fondo propio, o un SVG con `@media (prefers-color-scheme: dark)`).
 * `python manage.py check --deploy` muestra dos advertencias a proposito:
     * **W008** (`SECURE_SSL_REDIRECT`): la redireccion a HTTPS la hace Caddy. Activarla tambien en Django causaria un bucle de redirecciones si el proxy dejara de enviar `X-Forwarded-Proto`, y romperia los chequeos internos por HTTP.
     * **W021** (`SECURE_HSTS_PRELOAD`): no se solicita la lista de precarga HSTS de los navegadores, porque salir de ella tarda meses.

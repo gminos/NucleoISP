@@ -223,6 +223,9 @@ def obtener_logo_inquilino(request):
 def obtener_logo_inquilino_oscuro(request):
     return _resolver_logo(request, "images/logo-dark.svg")
 
+def obtener_favicon_inquilino(request):
+    return _resolver_logo(request, "images/favicon.svg")
+
 def obtener_nombre_inquilino(request):
     if hasattr(request, 'tenant') and request.tenant.schema_name != 'public':
         return request.tenant.name
@@ -239,7 +242,7 @@ UNFOLD = {
     "SITE_FAVICONS": [
         {
             "rel": "icon",
-            "href": obtener_logo_inquilino,
+            "href": obtener_favicon_inquilino,
         },
     ],
     "COLORS": {

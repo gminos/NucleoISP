@@ -6,6 +6,11 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ## [Unreleased]
 
+## [4.0.1] - 2026-11-26
+
+### Corregido
+- **Favicon:** Con el tema oscuro del navegador el favicon casi no se veia, porque el trazo de la "N" es casi negro. El nuevo `favicon.svg` usa `prefers-color-scheme` para cambiar a los colores de `logo-dark.svg` en oscuro; en claro se ve igual que antes. Si el inquilino tiene logo propio, se sigue usando ese archivo sin cambios (ver "Notas de operacion" en el `README.md`).
+
 ## [4.0.0] - 2026-11-22
 
 Version mayor: actualizar un despliegue existente requiere intervencion manual (ver "Notas de migracion").
